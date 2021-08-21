@@ -1,15 +1,25 @@
-// We need to import the CSS so that webpack will load it.
-// The MiniCssExtractPlugin is used to separate it out into
-// its own CSS file.
-import "../css/app.css"
+import css from '../css/app.css'
+import { productSocket } from './socket'
+import dom from './dom'
 
-// webpack automatically bundles all modules in your
-// entry points. Those entry points can be configured
-// in "webpack.config.js".
-//
-// Import deps with the dep name or local files with a relative path, for example:
-//
-//     import {Socket} from "phoenix"
-//     import socket from "./socket"
-//
-import "phoenix_html"
+const productIds = dom.getProductIds()
+
+if (productIds.length > 0) {
+  productSocket.connect()
+  productIds.forEach((id) => setupProductChannel(productSocket, id))
+}
+
+function setupProductChannel(socket, productId) {
+  const productChannel = socket.channel(`product:${productId}`)
+  productChannel.join().receive('error', () => {
+    console.error('Channel join failed')
+  })
+
+  productChannel.on('released', ({ size_html }) => {
+    dom.replaceProductComingSoon(productId, size_html)
+  })
+
+  productChannel.on('stock_change', ({ product_id, item_id, level }) => {
+    dom.updateItemLevel(item_id, level)
+  })
+}
