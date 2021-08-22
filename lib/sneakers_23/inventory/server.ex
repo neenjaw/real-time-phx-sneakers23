@@ -53,4 +53,10 @@ defmodule Sneakers23.Inventory.Server do
     new_inventory = Inventory.add_availabilities(inventory, [availability])
     {:reply, {:ok, inventory, new_inventory}, new_inventory}
   end
+
+  if Mix.env() == :test do
+    def handle_call({:test_set_inventory, inventory}, _from, _old) do
+      {:reply, {:ok, inventory}, inventory}
+    end
+  end
 end

@@ -15,6 +15,13 @@
     </header>
 
     <%= @inner_content %>
+    <%= if assigns[:cart_id] do %>
+      <div id="cart-container"></div>
+
+      <script type="text/javascript">
+        window.cartId = "<%= @cart_id %>"
+      </script>
+    <% end %>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

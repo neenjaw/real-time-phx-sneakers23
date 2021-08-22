@@ -7,16 +7,10 @@ defmodule Sneakers23.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
       Sneakers23.Repo,
-      # Start the Telemetry supervisor
       Sneakers23Web.Telemetry,
-      # Start the PubSub system
       {Phoenix.PubSub, name: Sneakers23.PubSub},
-      # Start the Endpoint (http/https)
       Sneakers23Web.Endpoint,
-      # Start a worker by calling: Sneakers23.Worker.start_link(arg)
-      # {Sneakers23.Worker, arg}
       Sneakers23.Inventory,
       Sneakers23.Replication
     ]
