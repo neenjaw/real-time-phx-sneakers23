@@ -3,6 +3,7 @@ defmodule Sneakers23Web.ProductSocket do
 
   ## Channels
   channel "product:*", Sneakers23Web.ProductChannel
+  channel "cart:*", Sneakers23Web.ShoppingCartChannel
 
   def connect(_params, socket, _connect_info) do
     {:ok, socket}

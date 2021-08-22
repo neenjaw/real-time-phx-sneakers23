@@ -46,12 +46,12 @@ defmodule Sneakers23.CheckoutTest do
     assert Checkout.cart_item_ids(cart) == [2, 1]
   end
 
-  # describe "generate_cart_id/0" do
-  #   test "a 64 length string is returned" do
-  #     id = Checkout.generate_cart_id()
-  #     assert byte_size(id) == 64
-  #   end
-  # end
+  describe "generate_cart_id/0" do
+    test "a 64 length string is returned" do
+      id = Checkout.generate_cart_id()
+      assert byte_size(id) == 64
+    end
+  end
 
   # describe "purchase_cart/1" do
   #   test "an invalid purchase returns an error" do
