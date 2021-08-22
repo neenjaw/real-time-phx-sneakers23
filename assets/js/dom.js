@@ -1,3 +1,5 @@
+import { getCartHtml } from './cartRenderer'
+
 const dom = {}
 
 function getProductIds() {
@@ -27,6 +29,11 @@ function updateItemLevel(itemId, level) {
     })
 }
 dom.updateItemLevel = updateItemLevel
+
+dom.renderCartHtml = (cart) => {
+  const cartContainer = document.getElementById('cart-container')
+  cartContainer.innerHTML = getCartHtml(cart)
+}
 
 function removeStockLevelClasses(el) {
   Array.from(el.classList)
