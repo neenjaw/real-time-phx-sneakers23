@@ -53,17 +53,15 @@ defmodule Sneakers23.Inventory do
 
     avail = Store.fetch_availability_for_item(item_id)
     {:ok, old_inv, inv} = Server.set_item_availability(pid, avail)
+    {:ok, item} = CompleteProduct.get_item_by_id(inv, item_id)
 
     unless being_replicated? do
       Replication.item_sold!(item_id)
       {:ok, old_item} = CompleteProduct.get_item_by_id(old_inv, item_id)
-      {:ok, item} = CompleteProduct.get_item_by_id(inv, item_id)
-
-      Sneakers23Web.notify_item_stock_change(
-        previous_item: old_item,
-        current_item: item
-      )
+      Sneakers23Web.notify_item_stock_change(previous_item: old_item, current_item: item)
     end
+
+    Sneakers23Web.notify_local_item_stock_change(item)
 
     :ok
   end

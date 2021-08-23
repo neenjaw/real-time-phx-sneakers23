@@ -23,6 +23,18 @@ defmodule Sneakers23Web do
   defdelegate notify_item_stock_change(opts),
     to: Sneakers23Web.ProductChannel
 
+  def notify_local_item_stock_change(%{available_count: 0, id: id}) do
+    Sneakers23.PubSub
+    |> Phoenix.PubSub.node_name()
+    |> Phoenix.PubSub.direct_broadcast(
+      Sneakers23.PubSub,
+      "item_out:#{id}",
+      {:item_out, id}
+    )
+  end
+
+  def notify_local_item_stock_change(_), do: false
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: Sneakers23Web
