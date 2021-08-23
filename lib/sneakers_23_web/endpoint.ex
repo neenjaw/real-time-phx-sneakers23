@@ -15,6 +15,10 @@ defmodule Sneakers23Web.Endpoint do
     websocket: true,
     longpoll: false
 
+  socket "admin_socket", Sneakers23Web.Admin.Socket,
+    websocket: true,
+    longpoll: false
+
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   if Application.get_env(:sneakers_23, :sql_sandbox) do

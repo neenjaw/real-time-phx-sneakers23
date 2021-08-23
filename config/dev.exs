@@ -65,6 +65,10 @@ config :sneakers_23, Sneakers23Web.Endpoint,
     ]
   ]
 
+config :sneakers_23, :admin_auth,
+  username: "admin",
+  password: "password"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

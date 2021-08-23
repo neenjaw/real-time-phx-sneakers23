@@ -1,0 +1,7 @@
+<div class="admin-container">
+  <h1>Admin Dashboard</h1>
+</div>
+
+<script type="text/javascript">
+  window.adminToken = "<%= @admin_token %>"
+</script>
