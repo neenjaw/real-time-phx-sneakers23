@@ -29,7 +29,7 @@ defmodule Sneakers23.Checkout.ShoppingCartTest do
       assert {:ok, cart = %{items: [1]}} = ShoppingCart.add_item(cart, 1)
       assert {:ok, cart = %{items: [2, 1]}} = ShoppingCart.add_item(cart, 2)
       assert {:ok, cart = %{items: [2]}} = ShoppingCart.remove_item(cart, 1)
-      assert {:ok, cart = %{items: []}} = ShoppingCart.remove_item(cart, 2)
+      assert {:ok, _cart = %{items: []}} = ShoppingCart.remove_item(cart, 2)
     end
 
     test "non-existent items are an error" do
