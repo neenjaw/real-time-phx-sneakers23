@@ -1,5 +1,6 @@
 defmodule Sneakers23.Replication.Server do
   use GenServer
+
   alias Sneakers23.Inventory
 
   def start_link(opts) do

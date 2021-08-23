@@ -20,5 +20,6 @@ defmodule Sneakers23.Replication do
     )
   end
 
-  defp server_pid(), do: Process.whereis(Server)
+  defp server_pid(),
+    do: Process.whereis(Server)
 end

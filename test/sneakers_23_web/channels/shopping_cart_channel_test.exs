@@ -56,26 +56,26 @@ defmodule Sneakers23Web.ShoppingCartChannelTest do
       assert Checkout.restore_cart(pushed_serialized) == cart
     end
 
-    # test "items in the cart are subscribed to for PubSub item_out" do
-    #   cart = test_cart(3)
-    #   join_with_cart(cart)
+    test "items in the cart are subscribed to for PubSub item_out" do
+      cart = test_cart(3)
+      join_with_cart(cart)
 
-    #   # Clear out the push that happens post-join by asserting on it
-    #   assert_push "cart", _
+      # Clear out the push that happens post-join by asserting on it
+      assert_push "cart", _
 
-    #   ids = Checkout.cart_item_ids(cart)
-    #   assert length(ids) == 3
+      ids = Checkout.cart_item_ids(cart)
+      assert length(ids) == 3
 
-    #   Enum.each(ids, fn id ->
-    #     Sneakers23Web.notify_local_item_stock_change(%{id: id, available_count: 0})
-    #     assert_push "cart", _
-    #   end)
+      Enum.each(ids, fn id ->
+        Sneakers23Web.notify_local_item_stock_change(%{id: id, available_count: 0})
+        assert_push "cart", _
+      end)
 
-    #   Enum.each([10, 11, 12], fn id ->
-    #     Sneakers23Web.notify_local_item_stock_change(%{id: id, available_count: 0})
-    #     refute_push "cart", _
-    #   end)
-    # end
+      Enum.each([10, 11, 12], fn id ->
+        Sneakers23Web.notify_local_item_stock_change(%{id: id, available_count: 0})
+        refute_push "cart", _
+      end)
+    end
   end
 
   describe "handle_in add_item" do
@@ -113,20 +113,20 @@ defmodule Sneakers23Web.ShoppingCartChannelTest do
       assert Checkout.restore_cart(serialized_cart) |> Checkout.cart_item_ids() == [1]
     end
 
-    #   test "a PubSub subscription for the item is added" do
-    #     cart = test_cart(0)
-    #     socket = join_with_cart(cart)
-    #     assert_push "cart", %{serialized: _, items: []}
+    test "a PubSub subscription for the item is added" do
+      cart = test_cart(0)
+      socket = join_with_cart(cart)
+      assert_push "cart", %{serialized: _, items: []}
 
-    #     push(socket, "add_item", %{"item_id" => "1"})
-    #     wait_until_messages_processed(socket)
+      push(socket, "add_item", %{"item_id" => "1"})
+      wait_until_messages_processed(socket)
 
-    #     Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
-    #     assert_push "cart", _
+      Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
+      assert_push "cart", _
 
-    #     Sneakers23Web.notify_local_item_stock_change(%{id: 2, available_count: 0})
-    #     refute_push "cart", _
-    #   end
+      Sneakers23Web.notify_local_item_stock_change(%{id: 2, available_count: 0})
+      refute_push "cart", _
+    end
   end
 
   describe "handle_in remove_item" do
@@ -164,20 +164,20 @@ defmodule Sneakers23Web.ShoppingCartChannelTest do
       assert Checkout.restore_cart(serialized_cart) |> Checkout.cart_item_ids() == [2]
     end
 
-    # test "the PubSub subscription for the item is removed" do
-    #   cart = test_cart(1)
-    #   socket = join_with_cart(cart)
-    #   assert_push "cart", %{serialized: _, items: []}
+    test "the PubSub subscription for the item is removed" do
+      cart = test_cart(1)
+      socket = join_with_cart(cart)
+      assert_push "cart", %{serialized: _, items: []}
 
-    #   Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
-    #   assert_push "cart", _
+      Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
+      assert_push "cart", _
 
-    #   push(socket, "remove_item", %{"item_id" => "1"})
-    #   wait_until_messages_processed(socket)
+      push(socket, "remove_item", %{"item_id" => "1"})
+      wait_until_messages_processed(socket)
 
-    #   Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
-    #   refute_push "cart", _
-    # end
+      Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
+      refute_push "cart", _
+    end
   end
 
   describe "handle_out cart_updated" do
@@ -214,69 +214,69 @@ defmodule Sneakers23Web.ShoppingCartChannelTest do
       assert Checkout.restore_cart(serialized_push) == other_cart
     end
 
-    # test "added items are subscribed to" do
-    #   cart = test_cart(1)
-    #   other_cart = test_cart(3)
-    #   {:ok, serialized} = Checkout.export_cart(other_cart)
-    #   socket = join_with_cart(cart)
-    #   assert_push "cart", _
+    test "added items are subscribed to" do
+      cart = test_cart(1)
+      other_cart = test_cart(3)
+      {:ok, serialized} = Checkout.export_cart(other_cart)
+      socket = join_with_cart(cart)
+      assert_push "cart", _
 
-    #   broadcast_from(socket, "cart_updated", %{
-    #     "serialized" => serialized,
-    #     "added" => [10],
-    #     "removed" => []
-    #   })
+      broadcast_from(socket, "cart_updated", %{
+        "serialized" => serialized,
+        "added" => [10],
+        "removed" => []
+      })
 
-    #   assert_push "cart", _
+      assert_push "cart", _
 
-    #   wait_until_messages_processed(socket)
+      wait_until_messages_processed(socket)
 
-    #   Sneakers23Web.notify_local_item_stock_change(%{id: 10, available_count: 0})
-    #   assert_push "cart", _
-    # end
+      Sneakers23Web.notify_local_item_stock_change(%{id: 10, available_count: 0})
+      assert_push "cart", _
+    end
 
-    #   test "removed items are unsubscribed to" do
-    #     cart = test_cart(1)
-    #     other_cart = test_cart(3)
-    #     {:ok, serialized} = Checkout.export_cart(other_cart)
-    #     socket = join_with_cart(cart)
-    #     assert_push "cart", _
+    test "removed items are unsubscribed to" do
+      cart = test_cart(1)
+      other_cart = test_cart(3)
+      {:ok, serialized} = Checkout.export_cart(other_cart)
+      socket = join_with_cart(cart)
+      assert_push "cart", _
 
-    #     broadcast_from(socket, "cart_updated", %{
-    #       "serialized" => serialized,
-    #       "added" => [],
-    #       "removed" => [1]
-    #     })
+      broadcast_from(socket, "cart_updated", %{
+        "serialized" => serialized,
+        "added" => [],
+        "removed" => [1]
+      })
 
-    #     assert_push "cart", _
+      assert_push "cart", _
 
-    #     wait_until_messages_processed(socket)
+      wait_until_messages_processed(socket)
 
-    #     Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
-    #     refute_push "cart", _
-    #   end
+      Sneakers23Web.notify_local_item_stock_change(%{id: 1, available_count: 0})
+      refute_push "cart", _
+    end
   end
 
-  # describe "handle_info {:item_out, id}" do
-  #   test "the cart is pushed to the client" do
-  #     cart = test_cart(1)
-  #     socket = join_with_cart(cart)
-  #     assert_push "cart", _
+  describe "handle_info {:item_out, id}" do
+    test "the cart is pushed to the client" do
+      cart = test_cart(1)
+      socket = join_with_cart(cart)
+      assert_push "cart", _
 
-  #     send(socket.channel_pid, {:item_out, 1})
-  #     wait_until_messages_processed(socket)
-  #     assert_push "cart", _
-  #   end
-  # end
+      send(socket.channel_pid, {:item_out, 1})
+      wait_until_messages_processed(socket)
+      assert_push "cart", _
+    end
+  end
 
-  # defp wait_until_messages_processed(socket = %{channel_pid: pid}) do
-  #   if Process.info(pid, :message_queue_len) == {:message_queue_len, 0} do
-  #     # Ensures that no message is actively processing
-  #     :sys.get_state(pid)
-  #     :ok
-  #   else
-  #     Process.sleep(10)
-  #     wait_until_messages_processed(socket)
-  #   end
-  # end
+  defp wait_until_messages_processed(socket = %{channel_pid: pid}) do
+    if Process.info(pid, :message_queue_len) == {:message_queue_len, 0} do
+      # Ensures that no message is actively processing
+      :sys.get_state(pid)
+      :ok
+    else
+      Process.sleep(10)
+      wait_until_messages_processed(socket)
+    end
+  end
 end

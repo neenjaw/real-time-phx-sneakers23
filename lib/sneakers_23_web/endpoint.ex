@@ -1,9 +1,6 @@
 defmodule Sneakers23Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :sneakers_23
 
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
     key: "_sneakers_23_key",
@@ -19,6 +16,10 @@ defmodule Sneakers23Web.Endpoint do
     longpoll: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+
+  if Application.get_env(:sneakers_23, :sql_sandbox) do
+    plug Phoenix.Ecto.SQL.Sandbox
+  end
 
   # Serve at "/" the static files from "priv/static" directory.
   #

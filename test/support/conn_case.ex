@@ -1,3 +1,11 @@
+# ---
+# Excerpted from "Real-Time Phoenix",
+# published by The Pragmatic Bookshelf.
+# Copyrights apply to this code. It may not be used to create training material,
+# courses, books, articles, and the like. Contact us if you are in doubt.
+# We make no guarantees that this code is fit for any purpose.
+# Visit http://www.pragmaticprogrammer.com/titles/sbsockets for more book information.
+# ---
 defmodule Sneakers23Web.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
@@ -8,11 +16,9 @@ defmodule Sneakers23Web.ConnCase do
   to build common data structures and query the data layer.
 
   Finally, if the test case interacts with the database,
-  we enable the SQL sandbox, so changes done to the database
-  are reverted at the end of every test. If you are using
-  PostgreSQL, you can even run database tests asynchronously
-  by setting `use Sneakers23Web.ConnCase, async: true`, although
-  this option is not recommended for other databases.
+  it cannot be async. For this reason, every test runs
+  inside a transaction which is reset at the beginning
+  of the test unless the test case is marked as async.
   """
 
   use ExUnit.CaseTemplate
@@ -22,8 +28,6 @@ defmodule Sneakers23Web.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import Sneakers23Web.ConnCase
-
       alias Sneakers23Web.Router.Helpers, as: Routes
 
       # The default endpoint for testing

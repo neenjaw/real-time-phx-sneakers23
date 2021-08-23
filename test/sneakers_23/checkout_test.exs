@@ -53,46 +53,46 @@ defmodule Sneakers23.CheckoutTest do
     end
   end
 
-  # describe "purchase_cart/1" do
-  #   test "an invalid purchase returns an error" do
-  #     cart = Checkout.restore_cart(nil)
-  #     assert {:ok, cart} = Checkout.add_item_to_cart(cart, 1)
+  describe "purchase_cart/1" do
+    test "an invalid purchase returns an error" do
+      cart = Checkout.restore_cart(nil)
+      assert {:ok, cart} = Checkout.add_item_to_cart(cart, 1)
 
-  #     assert Checkout.purchase_cart(cart) == {:error, :purchase_failed}
-  #     # purge async
-  #     Process.sleep(50)
-  #   end
+      assert Checkout.purchase_cart(cart) == {:error, :purchase_failed}
+      # purge async
+      Process.sleep(50)
+    end
 
-  #   test "no availability returns an error" do
-  #     {_, %{i1: i1}} = Test.Factory.InventoryFactory.complete_products()
-  #     assert Checkout.SingleItem.sell_item(i1.id, skip_replication: true) == :ok
-  #     cart = Checkout.restore_cart(nil)
-  #     assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
+    test "no availability returns an error" do
+      {_, %{i1: i1}} = Test.Factory.InventoryFactory.complete_products()
+      assert Checkout.SingleItem.sell_item(i1.id, skip_replication: true) == :ok
+      cart = Checkout.restore_cart(nil)
+      assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
 
-  #     assert Checkout.purchase_cart(cart) == {:error, :purchase_failed}
-  #     # purge async
-  #     Process.sleep(50)
-  #   end
+      assert Checkout.purchase_cart(cart) == {:error, :purchase_failed}
+      # purge async
+      Process.sleep(50)
+    end
 
-  #   test "a valid item can be purchased" do
-  #     {_, %{i1: i1}} = Test.Factory.InventoryFactory.complete_products()
-  #     cart = Checkout.restore_cart(nil)
-  #     assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
+    test "a valid item can be purchased" do
+      {_, %{i1: i1}} = Test.Factory.InventoryFactory.complete_products()
+      cart = Checkout.restore_cart(nil)
+      assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
 
-  #     assert Checkout.purchase_cart(cart, skip_replication: true) == {:ok, :purchase_complete}
-  #     # purge async
-  #     Process.sleep(50)
-  #   end
+      assert Checkout.purchase_cart(cart, skip_replication: true) == {:ok, :purchase_complete}
+      # purge async
+      Process.sleep(50)
+    end
 
-  #   test "multiple items can be purchased" do
-  #     {_, %{i1: i1, i2: i2}} = Test.Factory.InventoryFactory.complete_products()
-  #     cart = Checkout.restore_cart(nil)
-  #     assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
-  #     assert {:ok, cart} = Checkout.add_item_to_cart(cart, i2.id)
+    test "multiple items can be purchased" do
+      {_, %{i1: i1, i2: i2}} = Test.Factory.InventoryFactory.complete_products()
+      cart = Checkout.restore_cart(nil)
+      assert {:ok, cart} = Checkout.add_item_to_cart(cart, i1.id)
+      assert {:ok, cart} = Checkout.add_item_to_cart(cart, i2.id)
 
-  #     assert Checkout.purchase_cart(cart, skip_replication: true) == {:ok, :purchase_complete}
-  #     # purge async
-  #     Process.sleep(50)
-  #   end
-  # end
+      assert Checkout.purchase_cart(cart, skip_replication: true) == {:ok, :purchase_complete}
+      # purge async
+      Process.sleep(50)
+    end
+  end
 end

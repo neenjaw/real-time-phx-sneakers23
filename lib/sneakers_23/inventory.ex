@@ -1,11 +1,3 @@
-# ---
-# Excerpted from "Real-Time Phoenix",
-# published by The Pragmatic Bookshelf.
-# Copyrights apply to this code. It may not be used to create training material,
-# courses, books, articles, and the like. Contact us if you are in doubt.
-# We make no guarantees that this code is fit for any purpose.
-# Visit http://www.pragmaticprogrammer.com/titles/sbsockets for more book information.
-# ---
 defmodule Sneakers23.Inventory do
   alias __MODULE__.{CompleteProduct, DatabaseLoader, Server, Store}
   alias Sneakers23.Replication
@@ -58,7 +50,11 @@ defmodule Sneakers23.Inventory do
     unless being_replicated? do
       Replication.item_sold!(item_id)
       {:ok, old_item} = CompleteProduct.get_item_by_id(old_inv, item_id)
-      Sneakers23Web.notify_item_stock_change(previous_item: old_item, current_item: item)
+
+      Sneakers23Web.notify_item_stock_change(
+        previous_item: old_item,
+        current_item: item
+      )
     end
 
     Sneakers23Web.notify_local_item_stock_change(item)

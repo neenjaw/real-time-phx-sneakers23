@@ -28,11 +28,8 @@ defmodule Sneakers23Web.CartView do
     :main_image_url,
     :released
   ]
-  @item_attrs [
-    :id,
-    :size,
-    :sku
-  ]
+
+  @item_attrs [:id, :size, :sku]
 
   defp render_item(product, item) do
     product_attributes = Map.take(product, @product_attrs)

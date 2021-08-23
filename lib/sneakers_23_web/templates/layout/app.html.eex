@@ -10,11 +10,12 @@
   </head>
   <body>
     <header>
-      <h2>Sneakers23</h2>
+      <h2><%= link("Sneakers23", to: Routes.product_path(@conn, :index)) %></h2>
       <h6><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></h6>
     </header>
 
     <%= @inner_content %>
+
     <%= if assigns[:cart_id] do %>
       <div id="cart-container"></div>
 
@@ -22,6 +23,7 @@
         window.cartId = "<%= @cart_id %>"
       </script>
     <% end %>
+
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

@@ -1,9 +1,17 @@
+#---
+# Excerpted from "Real-Time Phoenix",
+# published by The Pragmatic Bookshelf.
+# Copyrights apply to this code. It may not be used to create training material,
+# courses, books, articles, and the like. Contact us if you are in doubt.
+# We make no guarantees that this code is fit for any purpose.
+# Visit http://www.pragmaticprogrammer.com/titles/sbsockets for more book information.
+#---
 defmodule Sneakers23Web.ShoppingCartChannel do
   use Phoenix.Channel
 
-  import Sneakers23Web.CartView, only: [cart_to_map: 1]
-
   alias Sneakers23.Checkout
+
+  import Sneakers23Web.CartView, only: [cart_to_map: 1]
 
   intercept ["cart_updated"]
 
@@ -16,42 +24,31 @@ defmodule Sneakers23Web.ShoppingCartChannel do
     {:ok, socket}
   end
 
-  def handle_in(
-        "add_item",
-        %{"item_id" => id},
-        socket = %{assigns: %{cart: cart}}
-      ) do
-    case Checkout.add_item_to_cart(cart, String.to_integer(id)) do
-      {:ok, new_cart} ->
-        send(self(), {:subscribe, id})
-        broadcast_cart(new_cart, socket, added: [id])
-        socket = assign(socket, :cart, new_cart)
-        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+  def join("cart:" <> id, params, socket) when byte_size(id) == 64 do
+    cart = get_cart(params)
+    socket = assign(socket, :cart, cart)
+    send(self(), :send_cart)
 
-      {:error, :duplicate_item} ->
-        {:reply, {:error, %{error: "duplicate_item"}}, socket}
-    end
+    {:ok, socket}
   end
 
-  def handle_in("remove_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
-    case Checkout.remove_item_from_cart(cart, String.to_integer(id)) do
-      {:ok, new_cart} ->
-        send(self(), {:unsubscribe, id})
-        broadcast_cart(new_cart, socket, removed: [id])
-        socket = assign(socket, :cart, new_cart)
-        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+  def join("cart:" <> id, params, socket) when byte_size(id) == 64 do
+    cart = get_cart(params)
+    socket = assign(socket, :cart, cart)
 
-      {:error, :not_found} ->
-        {:reply, {:error, %{error: "not_found"}}, socket}
-    end
+    {:ok, socket}
   end
 
-  def handle_info({:item_out, _id}, socket = %{assigns: %{cart: cart}}) do
+  def join("cart:" <> _id, _params, socket) do
+    {:ok, socket}
+  end
+
+  def handle_info(:send_cart, socket = %{assigns: %{cart: cart}}) do
     push(socket, "cart", cart_to_map(cart))
     {:noreply, socket}
   end
 
-  def handle_info(:send_cart, socket = %{assigns: %{cart: cart}}) do
+  def handle_info({:item_out, _id}, socket = %{assigns: %{cart: cart}}) do
     push(socket, "cart", cart_to_map(cart))
     {:noreply, socket}
   end
@@ -66,6 +63,71 @@ defmodule Sneakers23Web.ShoppingCartChannel do
     {:noreply, socket}
   end
 
+  def handle_in(
+    "add_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
+    case Checkout.add_item_to_cart(cart, String.to_integer(id)) do
+      {:ok, new_cart} ->
+        send(self(), {:subscribe, id})
+        broadcast_cart(new_cart, socket, added: [id])
+        socket = assign(socket, :cart, new_cart)
+        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+
+      {:error, :duplicate_item} ->
+        {:reply, {:error, %{error: "duplicate_item"}}, socket}
+    end
+  end
+
+  def handle_in(
+    "add_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
+    case Checkout.add_item_to_cart(cart, String.to_integer(id)) do
+      {:ok, new_cart} ->
+        broadcast_cart(new_cart, socket, added: [id])
+        socket = assign(socket, :cart, new_cart)
+        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+
+      {:error, :duplicate_item} ->
+        {:reply, {:error, %{error: "duplicate_item"}}, socket}
+    end
+  end
+
+  def handle_in(
+    "add_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
+    case Checkout.add_item_to_cart(cart, String.to_integer(id)) do
+      {:ok, new_cart} ->
+        socket = assign(socket, :cart, new_cart)
+        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+
+      {:error, :duplicate_item} ->
+        {:reply, {:error, %{error: "duplicate_item"}}, socket}
+    end
+  end
+
+  def handle_in(
+    "remove_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
+    case Checkout.remove_item_from_cart(cart, String.to_integer(id)) do
+      {:ok, new_cart} ->
+        send(self(), {:unsubscribe, id})
+        broadcast_cart(new_cart, socket, removed: [id])
+        socket = assign(socket, :cart, new_cart)
+        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+
+      {:error, :not_found} ->
+        {:reply, {:error, %{error: "not_found"}}, socket}
+    end
+  end
+
+  def handle_in(
+    "remove_item", %{"item_id" => id}, socket = %{assigns: %{cart: cart}}) do
+    case Checkout.remove_item_from_cart(cart, String.to_integer(id)) do
+      {:ok, new_cart} ->
+        broadcast_cart(new_cart, socket, removed: [id])
+        socket = assign(socket, :cart, new_cart)
+        {:reply, {:ok, cart_to_map(new_cart)}, socket}
+
+      {:error, :not_found} ->
+        {:reply, {:error, %{error: "not_found"}}, socket}
+    end
+  end
   def handle_out("cart_updated", params, socket) do
     modify_subscriptions(params)
     cart = get_cart(params)
@@ -75,14 +137,12 @@ defmodule Sneakers23Web.ShoppingCartChannel do
     {:noreply, socket}
   end
 
-  # Helpers
+  def handle_out("cart_updated", params, socket) do
+    cart = get_cart(params)
+    socket = assign(socket, :cart, cart)
+    push(socket, "cart", cart_to_map(cart))
 
-  defp enqueue_cart_subscriptions(cart) do
-    cart
-    |> Checkout.cart_item_ids()
-    |> Enum.each(fn id ->
-      send(self(), {:subscribe, id})
-    end)
+    {:noreply, socket}
   end
 
   defp broadcast_cart(cart, socket, opts) do
@@ -101,8 +161,16 @@ defmodule Sneakers23Web.ShoppingCartChannel do
     |> Checkout.restore_cart()
   end
 
+  defp enqueue_cart_subscriptions(cart) do
+    cart
+    |> Checkout.cart_item_ids()
+    |> Enum.each(fn id ->
+      send(self(), {:subscribe, id})
+    end)
+  end
+
   defp modify_subscriptions(%{"added" => add, "removed" => remove}) do
-    Enum.each(add, &send(self(), {:subscribe, &1}))
-    Enum.each(remove, &send(self(), {:unsubscribe, &1}))
+    Enum.each(add, & send(self(), {:subscribe, &1}))
+    Enum.each(remove, & send(self(), {:unsubscribe, &1}))
   end
 end

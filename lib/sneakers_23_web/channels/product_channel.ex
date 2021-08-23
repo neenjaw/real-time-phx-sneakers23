@@ -32,15 +32,11 @@ defmodule Sneakers23Web.ProductChannel do
         {:ok, :no_change}
 
       {_, new_level} ->
-        Endpoint.broadcast!(
-          "product:#{p_id}",
-          "stock_change",
-          %{
-            product_id: p_id,
-            item_id: id,
-            level: new_level
-          }
-        )
+        Endpoint.broadcast!("product:#{p_id}", "stock_change", %{
+          product_id: p_id,
+          item_id: id,
+          level: new_level
+        })
 
         {:ok, :broadcast}
     end

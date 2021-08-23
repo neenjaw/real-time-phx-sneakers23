@@ -9,6 +9,22 @@ defmodule Sneakers23.Checkout do
 
   defdelegate remove_item_from_cart(cart, item), to: ShoppingCart, as: :remove_item
 
+  def purchase_cart(cart, opts \\ []) do
+    Sneakers23.Repo.transaction(fn ->
+      Enum.each(cart_item_ids(cart), fn id ->
+        case Sneakers23.Checkout.SingleItem.sell_item(id, opts) do
+          :ok ->
+            :ok
+
+          _ ->
+            Sneakers23.Repo.rollback(:purchase_failed)
+        end
+      end)
+
+      :purchase_complete
+    end)
+  end
+
   def restore_cart(nil), do: ShoppingCart.new()
 
   def restore_cart(serialized) do

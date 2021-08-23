@@ -16,19 +16,16 @@ defmodule Test.Factory.InventoryFactory do
     i1 = ItemFactory.create!(%{sku: "i1", product_id: p1.id})
     i2 = ItemFactory.create!(%{sku: "i2", product_id: p1.id})
     i3 = ItemFactory.create!(%{sku: "i3", product_id: p2.id})
-    ia1 = ItemAvailabilityFactory.create!(%{item_id: i1.id, available_count: 1})
-    ia2 = ItemAvailabilityFactory.create!(%{item_id: i2.id, available_count: 2})
-    ia3 = ItemAvailabilityFactory.create!(%{item_id: i3.id, available_count: 3})
-
+    ia1 =
+      ItemAvailabilityFactory.create!(%{item_id: i1.id, available_count: 1})
+    ia2 =
+      ItemAvailabilityFactory.create!(%{item_id: i2.id, available_count: 2})
+    ia3 =
+      ItemAvailabilityFactory.create!(%{item_id: i3.id, available_count: 3})
     data = %{
-      p1: p1,
-      p2: p2,
-      i1: i1,
-      i2: i2,
-      i3: i3,
-      ia1: ia1,
-      ia2: ia2,
-      ia3: ia3
+      p1: p1, p2: p2,
+      i1: i1, i2: i2, i3: i3,
+      ia1: ia1, ia2: ia2, ia3: ia3
     }
 
     inventory =
